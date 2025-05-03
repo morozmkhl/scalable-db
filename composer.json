@@ -1,0 +1,65 @@
+{
+  "name": "moroz.mkhl/scalable-db",
+  "description": "Advanced sharding, replication & fail‑over package for Laravel 11",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "moroz.mkhl",
+      "email": "moroz.mkhl@gmail.com"
+    }
+  ],
+
+  "require": {
+    "php": "^8.2",
+    "illuminate/support": "^11.0",
+    "illuminate/database": "^11.0"
+  },
+
+  "require-dev": {
+    "orchestra/testbench": "^9.0",
+    "pestphp/pest": "^2.0",
+    "laravel/pint": "^1.0",
+    "phpstan/phpstan": "^1.11"
+  },
+
+  "autoload": {
+    "psr-4": {
+      "ScalableDB\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+
+  "autoload-dev": {
+    "psr-4": {
+      "ScalableDB\\Tests\\": "tests/"
+    }
+  },
+
+  "extra": {
+    "laravel": {
+      "providers": [
+        "ScalableDB\\ScalableDBServiceProvider"
+      ],
+      "aliases": {
+        "Shard": "ScalableDB\\Facades\\Shard"
+      }
+    }
+  },
+
+  "scripts": {
+    "test": "vendor/bin/pest",
+    "lint": "vendor/bin/pint",
+    "analyse": "vendor/bin/phpstan"
+  },
+
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
