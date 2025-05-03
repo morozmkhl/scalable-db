@@ -46,12 +46,12 @@ return [
 
         'shard_0' => [
             'connection' => 'shard0_master',
-            'replicas'   => [],
+            'replicas'   => ['shard0_replica1', 'shard0_replica2'],
         ],
 
         'shard_1' => [
             'connection' => 'shard1_master',
-            'replicas'   => [],
+            'replicas'   => ['shard1_replica1', 'shard1_replica2'],
         ],
     ],
 
