@@ -110,6 +110,25 @@ Route::middleware('shard.tenant')->group(function () {
 
 ---
 
+### События
+
+| Событие | Когда происходит | Поля |
+|---------|------------------|------|
+| `ShardResolved` | определён шард по tenant‑ключу | `tenantKey`, `shard`, `strategy` |
+| `ShardFailover` | мастер упал, переключение на реплику | `shard`, `fromConnection`, `toConnection`, `exception` |
+
+Пример логирования:
+
+```php
+Event::listen(ShardFailover::class, function ($e) {
+    logger()->warning("Fail‑over {$e->shard}: {$e->fromConnection} → {$e->toConnection}", [
+        'error' => $e->exception->getMessage(),
+    ]);
+});
+```
+
+---
+
 ## 🧪 Тесты
 
 ```bash

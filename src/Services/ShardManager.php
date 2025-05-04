@@ -3,6 +3,9 @@ namespace ScalableDB\Services;
 
 use Closure;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\Facades\Event;
+use ScalableDB\Events\ShardFailover;
+use ScalableDB\Events\ShardResolved;
 use ScalableDB\Strategies\ShardingStrategyInterface;
 
 class ShardManager
@@ -20,7 +23,11 @@ class ShardManager
      */
     public function resolve(string|int $key): string
     {
-        return $this->strategy->getShard($key);
+        $shard = $this->strategy->getShard($key);
+
+        Event::dispatch(new ShardResolved($key, $shard, class_basename($this->strategy)));
+
+        return $shard;
     }
 
     /**
@@ -39,14 +46,23 @@ class ShardManager
             return $callback();
         } catch (\PDOException $e) {
 
-            /** ▸ FAIL‑OVER логика */
+            /** ▸ FAIL‑OVER логика */
             $replicas = $this->config['shards'][$shard]['replicas'] ?? [];
             if ($replicas !== []) {
                 // пробуем первую реплику (read‑only) вместо мастера
                 $fallback = $replicas[0];
                 $this->db->purge($primary);                // сбросить плохое PDO
+
+                Event::dispatch(new ShardFailover(
+                    $shard,
+                    $primary,
+                    $fallback,
+                    $e
+                ));
+
                 $this->db->setDefaultConnection($fallback);
                 // ⚠ возможна запись ‑ бросаем исключение при попытке write
+
                 try {
                     return $callback();
                 } finally {
@@ -55,7 +71,6 @@ class ShardManager
                 }
             }
 
-            // реплик нет — отдаём ошибку выше
             throw $e;
         } finally {
             // нормальное завершение
