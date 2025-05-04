@@ -40,10 +40,14 @@ class ScalableDBServiceProvider extends ServiceProvider
                 __DIR__.'/../config/scalable-db.php' => config_path('scalable-db.php'),
             ], 'scalable-db-config');
 
-            $this->commands([
-                Console\Commands\ShardMigrateCommand::class,
-            ]);
+
         }
+
+        $this->commands([
+            Console\Commands\ShardMigrateCommand::class,
+            Console\Commands\ShardStatusCommand::class,
+            Console\Commands\ShardDiagnoseCommand::class,
+        ]);
 
         $router = $this->app['router'];
         $router->aliasMiddleware('shard.tenant', \ScalableDB\Http\Middleware\TenantShardMiddleware::class);

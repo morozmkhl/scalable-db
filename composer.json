@@ -1,11 +1,11 @@
 {
-  "name": "moroz.mkhl/scalable-db",
+  "name": "morozmkhl/scalable-db",
   "description": "Advanced sharding, replication & fail‑over package for Laravel 11",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
-      "name": "moroz.mkhl",
+      "name": "Mikhail",
       "email": "moroz.mkhl@gmail.com"
     }
   ],
