@@ -1,5 +1,7 @@
 # Scalable DB · Sharding & Replication toolkit for Laravel 11
 
+![Tests](https://github.com/morozmkhl/scalable-db/actions/workflows/ci.yml/badge.svg)
+
 <!-- CI badge (добавится после настройки GitHub Actions) -->
 
 <!-- ![Tests](https://github.com/<vendor>/scalable-db/actions/workflows/ci.yml/badge.svg) -->
