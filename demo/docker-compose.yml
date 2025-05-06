@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: demo/Dockerfile
+    volumes:
+      - ./../:/app/scalable-db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - shard0
+      - shard1
+      - replica1
+
+  shard0:
+    image: mysql:8
+    container_name: shard0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: shard0
+    ports:
+      - "33060:3306"
+
+  shard1:
+    image: mysql:8
+    container_name: shard1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: shard1
+
+  replica1:
+    image: mysql:8
+    container_name: replica1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: replica1
