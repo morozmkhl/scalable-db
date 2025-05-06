@@ -1,14 +1,14 @@
-# Scalable DB · Sharding & Replication toolkit for Laravel 11
+# ScalableDB · Sharding& Replication toolkit for Laravel11
 
 ![Tests](https://github.com/morozmkhl/scalable-db/actions/workflows/ci.yml/badge.svg)
 
-<!-- CI badge (добавится после настройки GitHub Actions) -->
+<!-- CI badge (добавится после настройки GitHubActions) -->
 
 <!-- ![Tests](https://github.com/<vendor>/scalable-db/actions/workflows/ci.yml/badge.svg) -->
 
-**Scalable DB** — лёгкий Laravel‑пакет, который привносит в приложение:
+**ScalableDB**— лёгкий Laravel‑пакет, который привносит в приложение:
 
-* продвинутый **шардинг** (Hash / Range / Lookup),
+* продвинутый **шардинг** (Hash/Range/ Lookup),
 * **read/write‑splitting** с авто‑sticky,
 * простой **fail‑over** на реплики,
 * CLI‑DevTools для диагностики и миграций,
@@ -16,26 +16,26 @@
 
 ---
 
-## ✨ Возможности
+## ✨Возможности
 
 | Блок                                                   | Готово |
 | ------------------------------------------------------ | :----: |
-| Hash‑шардинг (`crc32(id) % N`)                         |    ✔   |
+| Hash‑шардинг (`crc32(id)%N`)                         |    ✔   |
 | Range‑шардинг (диапазоны id)                           |    ✔   |
-| Read / Write splitting + sticky                        |    ✔   |
-| Fail‑over master → replica                             |    ✔   |
-| Middleware `shard.tenant`                              |    ✔   |
+| Read/ Write splitting + sticky                        |    ✔   |
+| Fail‑over master→ replica                             |    ✔   |
+| Middleware`shard.tenant`                              |    ✔   |
 | CLI: `shard:status`, `shard:diagnose`, `shard:migrate` |    ✔   |
-| Lookup‑table стратегия                                 |    ⏳   |
-| События (`ShardResolved`, `ShardFailover`)             |    ⏳   |
-| CI (matrix PHP 8.2/8.4 × SQLite/MySQL)                 |    ⏳   |
+| Lookup‑table стратегия                                 |    ✔    |
+| События (`ShardResolved`, `ShardFailover`)             |    ✔   |
+| CI(matrix PHP8.2/8.4×SQLite/MySQL)                 |    ⏳   |
 
 ---
 
-## ⚡ Установка
+## ⚡Установка
 
 ```bash
-composer require <vendor>/scalable-db --dev
+composer require morozmkhl/scalable-db --dev
 php artisan vendor:publish --tag=scalable-db-config   # создаст config/scalable-db.php
 ```
 
@@ -43,7 +43,7 @@ php artisan vendor:publish --tag=scalable-db-config   # создаст config/sc
 
 ---
 
-## 🛠️ Быстрый старт
+## 🛠️Быстрый старт
 
 ```php
 // config/scalable-db.php (минимальный пример)
@@ -70,6 +70,21 @@ return [
 ];
 ```
 
+### Lookup‑strategy
+
+```php
+'strategies' => [
+  'lookup' => [
+      'connection'   => 'lookup',    // БД с таблицей tenants
+      'table'        => 'tenants',
+      'key_column'   => 'id',
+      'shard_column' => 'shard',
+      'cache_ttl'    => 300,         // кэшировать 5 минут
+  ],
+],
+'default_strategy' => env('SCALABLE_DB_STRATEGY', 'lookup'),
+```
+
 ```php
 // пример использования
 $user = User::find(42);
@@ -84,7 +99,7 @@ Shard::forTenant($user->id)->run(function () use ($user) {
 
 ---
 
-## 🏃‍♀️ Middleware
+## 🏃‍♀️Middleware
 
 ```php
 Route::middleware('shard.tenant')->group(function () {
@@ -100,7 +115,7 @@ Route::middleware('shard.tenant')->group(function () {
 
 ---
 
-## 👩‍💻 DevTools CLI
+## 👩‍💻DevToolsCLI
 
 | Команда                                    | Назначение                                        |
 | ------------------------------------------ | ------------------------------------------------- |
@@ -129,11 +144,20 @@ Event::listen(ShardFailover::class, function ($e) {
 
 ---
 
-## 🧪 Тесты
+## Telescope
+
+Если в проекте установлен LaravelTelescope, Scalable DB автоматически
+добавляет тег `shard:<name>` к каждому запросу/команде.  
+Это облегчает отладку маршрутизации на шард.
+
+---
+
+
+## 🧪Тесты
 
 ```bash
 # локальный запуск
-composer test        # Pest + Orchestra Testbench
+composer test        # Pest + OrchestraTestbench
 ```
 
 Текущий набор покрывает:
@@ -142,27 +166,26 @@ composer test        # Pest + Orchestra Testbench
 * sticky‑поведение после записи,
 * fail‑over с моками DB Manager’а,
 * работу middleware,
-* DevTools CLI.
+* DevToolsCLI.
 
 ---
 
-## 🤝 Contributing
+## 🤝Contributing
 
-Bug‑репорт, pull‑request или идея — welcome!
+Bug‑репорт, pull‑request или идея— welcome!
 Перед PR запустите `composer lint && composer test`.
-Стиль кода проверяется **Laravel Pint**, статический анализ — **PHPStan**.
+Стиль кода проверяется **LaravelPint**, статический анализ—**PHPStan**.
 
 ---
 
-## 🗺️ Roadmap
+## 🗺️Roadmap
 
-* Lookup‑table стратегия (центральная БД tenant → shard).
 * Расширенный fail‑over (многократные ретраи, очередь реплик).
 * Метрики (prometheus middleware, логирование lag).
-* CI‑матрица и релиз в Packagist.
+* CI‑матрица и релиз вPackagist.
 
 ---
 
-## 📄 License
+## 📄License
 
 The MIT License (MIT). See [`LICENSE`](LICENSE) for details.
