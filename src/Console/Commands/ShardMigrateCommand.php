@@ -24,9 +24,9 @@ class ShardMigrateCommand extends Command
             }
 
             $this->line("➜  Migrating shard <info>$name</info> …");
-
             $code = Artisan::call('migrate', [
                 '--database' => $def['connection'],
+                '--path'     => 'database/migrations/lookup',
                 '--force'    => $this->option('force'),
             ]);
 

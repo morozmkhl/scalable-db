@@ -42,6 +42,9 @@ class ScalableDBServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
+                __DIR__.'/../database/migrations/lookup' => database_path('migrations/lookup'),
+            ], 'scalable-db-migrations');
+            $this->publishes([
                 __DIR__.'/../config/scalable-db.php' => config_path('scalable-db.php'),
             ], 'scalable-db-config');
 
@@ -52,6 +55,7 @@ class ScalableDBServiceProvider extends ServiceProvider
             Console\Commands\ShardMigrateCommand::class,
             Console\Commands\ShardStatusCommand::class,
             Console\Commands\ShardDiagnoseCommand::class,
+            Console\Commands\ShardSeedCommand::class,
         ]);
 
         $router = $this->app['router'];

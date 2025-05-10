@@ -170,6 +170,20 @@ composer test        # Pest + OrchestraTestbench
 
 ---
 
+## Demo
+
+```bash
+cd demo
+docker compose up -d --build        # развёртывание
+open http://localhost:8000/telescope
+curl http://localhost:8000/ping
+curl -X POST -d "id=5&name=Eve" http://localhost:8000/users
+curl http://localhost:8000/users/5
+curl http://localhost:8000/users/shard/5
+```
+
+---
+
 ## 🤝Contributing
 
 Bug‑репорт, pull‑request или идея— welcome!

@@ -8,10 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::connection('lookup')->dropIfExists('tenants');
         Schema::connection('lookup')->create('tenants', function (Blueprint $table) {
-            $table->id();                  // tenant ID
-            $table->string('shard');      // имя шарда (например, shard_0, shard_1)
-            $table->timestamps();         // created_at / updated_at (опционально)
+            $table->id();
+            $table->string('shard');
+            $table->timestamps();
         });
     }
 

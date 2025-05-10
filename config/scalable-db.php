@@ -30,7 +30,7 @@ return [
 
         'range' => [
             'ranges' => [
-                // 1‑10 000 → shard_0, 10 001‑20 000 → shard_1
+                // 1‑10000 → shard_0, 10001‑20000 → shard_1
                 ['min' => 1,     'max' => 10000,  'shard' => 'shard_0'],
                 ['min' => 10001, 'max' => 20000,  'shard' => 'shard_1'],
             ],
@@ -38,7 +38,7 @@ return [
 
         'lookup' => [
             // имя подключения, где хранится таблица tenants
-            'connection' => env('SCALABLE_DB_LOOKUP_CONN', 'sqlite'),
+            'connection' => env('SCALABLE_DB_LOOKUP_CONN', 'lookup'),
             // имя таблицы
             'table'      => 'tenants',
             // поле, содержащее tenant‑ID
@@ -59,12 +59,12 @@ return [
 
         'shard_0' => [
             'connection' => 'shard0_master',
-            'replicas'   => ['shard0_replica1', 'shard0_replica2'],
+            'replicas'   => ['shard0_replica1'],
         ],
 
         'shard_1' => [
             'connection' => 'shard1_master',
-            'replicas'   => ['shard1_replica1', 'shard1_replica2'],
+            'replicas'   => ['shard1_replica1'],
         ],
     ],
 
