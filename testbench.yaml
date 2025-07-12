@@ -1,0 +1,5 @@
+providers:
+  - ScalableDB\ScalableDBServiceProvider
+
+aliases:
+  Shard: ScalableDB\Facades\Shard
