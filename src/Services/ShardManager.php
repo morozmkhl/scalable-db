@@ -1,6 +1,7 @@
 <?php
 namespace ScalableDB\Services;
 
+use Closure;
 use Illuminate\Database\DatabaseManager;
 use ScalableDB\Strategies\ShardingStrategyInterface;
 
@@ -25,21 +26,44 @@ class ShardManager
     /**
      * Выполняет callback в контексте шарда
      */
-    public function runInShard(string $shard, \Closure $callback): mixed
+    public function runInShard(string $shard, Closure $callback): mixed
     {
         $prev = $this->db->getDefaultConnection();
-        $this->db->setDefaultConnection(
-            $this->config['shards'][$shard]['connection'] ?? $prev
-        );
+
+        // 👇 берём имя «главного» подключения
+        $primary = $this->config['shards'][$shard]['connection'] ?? $prev;
+        $this->db->setDefaultConnection($primary);
         $this->currentShard = $shard;
 
         try {
             return $callback();
+        } catch (\PDOException $e) {
+
+            /** ▸ FAIL‑OVER логика */
+            $replicas = $this->config['shards'][$shard]['replicas'] ?? [];
+            if ($replicas !== []) {
+                // пробуем первую реплику (read‑only) вместо мастера
+                $fallback = $replicas[0];
+                $this->db->purge($primary);                // сбросить плохое PDO
+                $this->db->setDefaultConnection($fallback);
+                // ⚠ возможна запись ‑ бросаем исключение при попытке write
+                try {
+                    return $callback();
+                } finally {
+                    $this->db->setDefaultConnection($prev);
+                    $this->currentShard = null;
+                }
+            }
+
+            // реплик нет — отдаём ошибку выше
+            throw $e;
         } finally {
-            // возвращаемся к предыдущему соединению
+            // нормальное завершение
             $this->db->setDefaultConnection($prev);
             $this->currentShard = null;
         }
+
+        return null;
     }
 
     public function getCurrentShard(): ?string
