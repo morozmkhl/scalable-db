@@ -13,7 +13,8 @@
   "require": {
     "php": "^8.2",
     "illuminate/support": "^11.0",
-    "illuminate/database": "^11.0"
+    "illuminate/database": "^11.0",
+    "laravel/telescope": "^5.7"
   },
 
   "require-dev": {
@@ -34,7 +35,8 @@
 
   "autoload-dev": {
     "psr-4": {
-      "ScalableDB\\Tests\\": "tests/"
+      "ScalableDB\\Tests\\": "tests/",
+      "ScalableDB\\Database\\Seeders\\": "database/seeders/"
     }
   },
 

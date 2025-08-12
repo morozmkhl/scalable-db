@@ -5,6 +5,8 @@ use Illuminate\Support\ServiceProvider;
 use ScalableDB\Console;
 use ScalableDB\Services\ShardManager;
 use ScalableDB\Strategies\HashShardingStrategy;
+use ScalableDB\Strategies\LookupShardingStrategy;
+use ScalableDB\Strategies\RangeShardingStrategy;
 
 class ScalableDBServiceProvider extends ServiceProvider
 {
@@ -15,17 +17,18 @@ class ScalableDBServiceProvider extends ServiceProvider
             $strategy = $cfg['default_strategy'];
 
             $strategyInstance = match ($strategy) {
-                'hash'  => new \ScalableDB\Strategies\HashShardingStrategy(
+                'hash'  => new HashShardingStrategy(
                     $cfg['strategies']['hash']['map'],
                     $cfg['strategies']['hash']['shard_count'],
                 ),
-                'range' => new \ScalableDB\Strategies\RangeShardingStrategy(
+                'range' => new RangeShardingStrategy(
                     $cfg['strategies']['range']['ranges'],
                 ),
+                'lookup' => new LookupShardingStrategy($cfg['strategies']['lookup']),
                 default => throw new \RuntimeException("Unknown strategy [$strategy]")
             };
 
-            return new \ScalableDB\Services\ShardManager(
+            return new ShardManager(
                 $app['db'],
                 $strategyInstance,
                 $cfg
@@ -51,5 +54,9 @@ class ScalableDBServiceProvider extends ServiceProvider
 
         $router = $this->app['router'];
         $router->aliasMiddleware('shard.tenant', \ScalableDB\Http\Middleware\TenantShardMiddleware::class);
+        if (class_exists(\Laravel\Telescope\Telescope::class)) {
+            \ScalableDB\Telescope\ShardTagWatcher::register();
+        }
+
     }
 }

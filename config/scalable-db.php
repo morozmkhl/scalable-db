@@ -35,6 +35,19 @@ return [
                 ['min' => 10001, 'max' => 20000,  'shard' => 'shard_1'],
             ],
         ],
+
+        'lookup' => [
+            // имя подключения, где хранится таблица tenants
+            'connection' => env('SCALABLE_DB_LOOKUP_CONN', 'sqlite'),
+            // имя таблицы
+            'table'      => 'tenants',
+            // поле, содержащее tenant‑ID
+            'key_column' => 'id',
+            // поле, где хранится шард
+            'shard_column' => 'shard',
+            // (опционально) время кэширования результата
+            'cache_ttl'  => 300,   // секунд; 0 = без кэша
+        ],
     ],
 
     /*
