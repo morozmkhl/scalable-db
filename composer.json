@@ -3,6 +3,7 @@
   "description": "Advanced sharding, replication & fail‑over package for Laravel 11",
   "type": "library",
   "license": "MIT",
+  "version": "1.0.0",
   "authors": [
     {
       "name": "Mikhail",
@@ -12,8 +13,7 @@
 
   "require": {
     "php": "^8.2",
-    "illuminate/support": "^11.0",
-    "illuminate/database": "^11.0",
+    "laravel/framework": "^11.0",
     "laravel/telescope": "^5.7"
   },
 

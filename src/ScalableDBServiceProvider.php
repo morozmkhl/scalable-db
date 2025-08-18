@@ -12,6 +12,8 @@ class ScalableDBServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/scalable-db.php', 'scalable-db');
+
         $this->app->singleton('shard.manager', function ($app) {
             $cfg      = $app['config']->get('scalable-db');
             $strategy = $cfg['default_strategy'];
