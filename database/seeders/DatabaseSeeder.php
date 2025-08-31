@@ -1,9 +1,8 @@
 <?php
 
-namespace ScalableDB\database\Seeders;
+namespace ScalableDB\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-
 
 class DatabaseSeeder extends Seeder
 {

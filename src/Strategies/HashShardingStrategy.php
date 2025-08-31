@@ -1,11 +1,15 @@
 <?php
+
 namespace ScalableDB\Strategies;
 
 class HashShardingStrategy implements ShardingStrategyInterface
 {
+    /**
+     * @param  array<int, string>  $map
+     */
     public function __construct(
         private readonly array $map,
-        private readonly int   $count
+        private readonly int $count
     ) {}
 
     public function getShard($key): string

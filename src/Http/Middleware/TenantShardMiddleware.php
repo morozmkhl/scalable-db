@@ -1,13 +1,15 @@
 <?php
+
 namespace ScalableDB\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use ScalableDB\Facades\Shard;
+use Symfony\Component\HttpFoundation\Response;
 
 class TenantShardMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         // Попытка достать tenant‑id из пользователя или заголовка
         $tenantId = $this->resolveTenantId($request);

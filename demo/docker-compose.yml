@@ -3,6 +3,9 @@ services:
     build:
       context: ..
       dockerfile: demo/Dockerfile
+    environment:
+      SHARD0_REPLICA_HOST: replica1
+      SCALABLE_DB_SEEDER: Database\Seeders\DatabaseSeeder
     volumes:
       - ./../:/app/scalable-db
       - ./database/seeders:/app/database/seeders

@@ -1,9 +1,11 @@
 <?php
+
 namespace ScalableDB\Services;
 
 use Closure;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Facades\Event;
+use PDOException;
 use ScalableDB\Events\ShardFailover;
 use ScalableDB\Events\ShardResolved;
 use ScalableDB\Strategies\ShardingStrategyInterface;
@@ -12,6 +14,9 @@ class ShardManager
 {
     private ?string $currentShard = null;
 
+    /**
+     * @param  array<string, mixed>  $config
+     */
     public function __construct(
         private readonly DatabaseManager $db,
         private readonly ShardingStrategyInterface $strategy,
@@ -44,45 +49,69 @@ class ShardManager
 
         try {
             return $callback();
-        } catch (\PDOException $e) {
-
-            /** ▸ FAIL‑OVER логика */
-            $replicas = $this->config['shards'][$shard]['replicas'] ?? [];
-            if ($replicas !== []) {
-                // пробуем первую реплику (read‑only) вместо мастера
-                $fallback = $replicas[0];
-                $this->db->purge($primary);                // сбросить плохое PDO
-
-                Event::dispatch(new ShardFailover(
-                    $shard,
-                    $primary,
-                    $fallback,
-                    $e
-                ));
-
-                $this->db->setDefaultConnection($fallback);
-                // ⚠ возможна запись ‑ бросаем исключение при попытке write
-
-                try {
-                    return $callback();
-                } finally {
-                    $this->db->setDefaultConnection($prev);
-                    $this->currentShard = null;
-                }
-            }
-
-            throw $e;
+        } catch (PDOException $e) {
+            return $this->attemptFailover($shard, $primary, $callback, $e);
         } finally {
-            // нормальное завершение
             $this->db->setDefaultConnection($prev);
             $this->currentShard = null;
         }
-
-        return null;
     }
 
     public function getCurrentShard(): ?string
     {
         return $this->currentShard;
+    }
+
+    /**
+     * @throws PDOException
+     */
+    private function attemptFailover(string $shard, string $primary, Closure $callback, PDOException $e): mixed
+    {
+        if (! ($this->config['failover']['auto_failover'] ?? false)) {
+            throw $e;
+        }
+
+        $replicas = $this->config['shards'][$shard]['replicas'] ?? [];
+        $maxRetries = (int) ($this->config['failover']['max_retries'] ?? 1);
+        $lastException = $e;
+
+        foreach (array_slice($replicas, 0, $maxRetries) as $fallback) {
+            try {
+                return $this->tryConnection($shard, $primary, $fallback, $callback, $e);
+            } catch (PDOException $replicaException) {
+                $lastException = $replicaException;
+            }
+        }
+
+        $globalFallback = $this->config['failover']['fallback_connection'] ?? null;
+        if (is_string($globalFallback) && $globalFallback !== '') {
+            return $this->tryConnection($shard, $primary, $globalFallback, $callback, $e);
+        }
+
+        throw $lastException;
+    }
+
+    /**
+     * @throws PDOException
+     */
+    private function tryConnection(
+        string $shard,
+        string $from,
+        string $to,
+        Closure $callback,
+        PDOException $cause
+    ): mixed {
+        $this->db->purge($from);
+
+        Event::dispatch(new ShardFailover(
+            $shard,
+            $from,
+            $to,
+            $cause
+        ));
+
+        $this->db->setDefaultConnection($to);
+
+        return $callback();
     }
 }

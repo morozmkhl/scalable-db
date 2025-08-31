@@ -13,15 +13,22 @@
 
   "require": {
     "php": "^8.2",
-    "laravel/framework": "^11.0",
-    "laravel/telescope": "^5.7"
+    "laravel/framework": "^11.0"
   },
 
   "require-dev": {
     "orchestra/testbench": "^9.0",
     "pestphp/pest": "^2.0",
     "laravel/pint": "^1.0",
-    "phpstan/phpstan": "^1.11"
+    "phpstan/phpstan": "^1.11",
+    "larastan/larastan": "^2.9",
+    "phpstan/phpstan-mockery": "^1.1",
+    "pestphp/pest-plugin-laravel": "^2.4",
+    "laravel/telescope": "^5.7"
+  },
+
+  "suggest": {
+    "laravel/telescope": "Shard tagging in Telescope entries"
   },
 
   "autoload": {
@@ -54,7 +61,7 @@
   "scripts": {
     "test": "vendor/bin/pest",
     "lint": "vendor/bin/pint",
-    "analyse": "vendor/bin/phpstan"
+    "analyse": "vendor/bin/phpstan analyse --memory-limit=512M"
   },
 
   "minimum-stability": "dev",

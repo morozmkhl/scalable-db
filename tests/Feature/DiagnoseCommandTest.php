@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Str;
 
 it('returns failure when shard down', function () {
@@ -10,6 +11,6 @@ it('returns failure when shard down', function () {
     [$code, $out] = runCmd('shard:diagnose', ['--json' => true]);
 
     expect($code)->toBe(1)
-    ->and(Str::contains($out, 'BAD'))
-    ->toBeTrue();
+        ->and(Str::contains($out, 'BAD'))
+        ->toBeTrue();
 });

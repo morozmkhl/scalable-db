@@ -1,4 +1,5 @@
 <?php
+
 namespace ScalableDB\Events;
 
 class ShardFailover

@@ -1,10 +1,11 @@
 <?php
+
 namespace ScalableDB\Strategies;
 
 class RangeShardingStrategy implements ShardingStrategyInterface
 {
     /**
-     * @param array<int, array{min:int, max:int|null, shard:string}> $ranges
+     * @param  array<int, array{min:int, max:int|null, shard:string}>  $ranges
      */
     public function __construct(private readonly array $ranges) {}
 

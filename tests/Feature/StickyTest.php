@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\DB;
 use ScalableDB\Facades\Shard;
 
@@ -6,7 +7,7 @@ it('sticks to master after write', function () {
 
     config()->set('database.connections.master', [
         'driver' => 'sqlite', 'database' => ':memory:', 'sticky' => true,
-        'read'  => ['host' => ':memory:'],
+        'read' => ['host' => ':memory:'],
         'write' => ['host' => ':memory:'],
     ]);
 

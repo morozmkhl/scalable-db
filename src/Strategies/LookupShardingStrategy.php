@@ -1,4 +1,5 @@
 <?php
+
 namespace ScalableDB\Strategies;
 
 use Illuminate\Support\Facades\Cache;
@@ -7,13 +8,16 @@ use RuntimeException;
 
 class LookupShardingStrategy implements ShardingStrategyInterface
 {
+    /**
+     * @param  array<string, mixed>  $cfg
+     */
     public function __construct(
         private readonly array $cfg,
     ) {}
 
     public function getShard($key): string
     {
-        $ttl   = $this->cfg['cache_ttl'] ?? 0;
+        $ttl = $this->cfg['cache_ttl'] ?? 0;
         $cacheKey = 'scalabledb_lookup_'.$key;
 
         return $ttl
@@ -28,7 +32,7 @@ class LookupShardingStrategy implements ShardingStrategyInterface
             ->where($this->cfg['key_column'], $key)
             ->value($this->cfg['shard_column']);
 
-        if (!$row) {
+        if (! $row) {
             throw new RuntimeException("Tenant [$key] not found in lookup table");
         }
 

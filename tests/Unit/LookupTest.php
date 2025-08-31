@@ -25,11 +25,11 @@ beforeEach(function () {
         'default_strategy' => 'lookup',
         'strategies' => [
             'lookup' => [
-                'connection'   => 'lookup',
-                'table'        => 'tenants',
-                'key_column'   => 'id',
+                'connection' => 'lookup',
+                'table' => 'tenants',
+                'key_column' => 'id',
                 'shard_column' => 'shard',
-                'cache_ttl'    => 0,
+                'cache_ttl' => 0,
             ],
         ],
         'shards' => [
@@ -43,6 +43,7 @@ beforeEach(function () {
 });
 
 it('resolves shard via lookup table', function () {
+    /** @var string $resolved */
     $resolved = Shard::forTenant(99)->run(fn () => Shard::current());
     expect($resolved)->toBe('S_LK');
 });

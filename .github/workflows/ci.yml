@@ -1,4 +1,4 @@
-# CI: unit + feature tests for Scalable DB
+# CI: lint + unit + feature tests for Scalable DB
 name: tests
 
 on:
@@ -7,7 +7,30 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, pdo_sqlite, intl, zip
+          coverage: none
+
+      - name: Composer install
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Lint (Pint)
+        run: composer lint -- --test
+
+      - name: Analyse (PHPStan)
+        run: composer analyse
+
   pest:
+    needs: lint
     runs-on: ubuntu-latest
 
     strategy:

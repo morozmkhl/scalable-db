@@ -1,7 +1,9 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use ScalableDB\Facades\Shard;
 
+use function Pest\Laravel\get;
 
 beforeEach(function () {
     Route::middleware('shard.tenant')
@@ -9,7 +11,6 @@ beforeEach(function () {
 });
 
 it('assigns shard via header', function () {
-    $resp = $this->get('/ping', ['X-Tenant-ID' => '150']);
-
-    $resp->assertJson(['shard' => 'B']);
+    get('/ping', ['X-Tenant-ID' => '150'])
+        ->assertJson(['shard' => 'B']);
 });

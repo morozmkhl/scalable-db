@@ -40,13 +40,13 @@ return [
             // имя подключения, где хранится таблица tenants
             'connection' => env('SCALABLE_DB_LOOKUP_CONN', 'lookup'),
             // имя таблицы
-            'table'      => 'tenants',
+            'table' => 'tenants',
             // поле, содержащее tenant‑ID
             'key_column' => 'id',
             // поле, где хранится шард
             'shard_column' => 'shard',
             // (опционально) время кэширования результата
-            'cache_ttl'  => 300,   // секунд; 0 = без кэша
+            'cache_ttl' => 300,   // секунд; 0 = без кэша
         ],
     ],
 
@@ -59,12 +59,12 @@ return [
 
         'shard_0' => [
             'connection' => 'shard0_master',
-            'replicas'   => ['shard0_replica1'],
+            'replicas' => ['shard0_replica1'],
         ],
 
         'shard_1' => [
             'connection' => 'shard1_master',
-            'replicas'   => ['shard1_replica1'],
+            'replicas' => ['shard1_replica1'],
         ],
     ],
 
@@ -74,8 +74,18 @@ return [
     |--------------------------------------------------------------------------
     */
     'failover' => [
-        'auto_failover'      => false,
-        'max_retries'        => 1,
-        'fallback_connection'=> null,
+        'auto_failover' => false,
+        'max_retries' => 1,
+        'fallback_connection' => null,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Seeder class for shard:seed
+    |--------------------------------------------------------------------------
+    */
+    'seeder' => env(
+        'SCALABLE_DB_SEEDER',
+        \ScalableDB\Database\Seeders\DatabaseSeeder::class,
+    ),
 ];

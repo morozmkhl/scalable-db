@@ -1,4 +1,5 @@
 <?php
+
 namespace ScalableDB\Telescope;
 
 use Illuminate\Database\Events\QueryExecuted;
@@ -18,9 +19,13 @@ class ShardTagWatcher
         });
     }
 
+    /**
+     * @return array<int, string>
+     */
     public static function tags(IncomingEntry $entry): array
     {
         $current = \ScalableDB\Facades\Shard::current();
+
         return $current ? ["shard:$current"] : [];
     }
 }

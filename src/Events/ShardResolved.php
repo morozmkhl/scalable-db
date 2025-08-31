@@ -6,7 +6,7 @@ class ShardResolved
 {
     public function __construct(
         public readonly string|int $tenantKey,
-        public readonly string     $shard,
-        public readonly string     $strategy,   // hash / range / lookup
+        public readonly string $shard,
+        public readonly string $strategy,   // hash / range / lookup
     ) {}
 }

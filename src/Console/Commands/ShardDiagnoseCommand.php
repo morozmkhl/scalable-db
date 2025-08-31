@@ -1,4 +1,5 @@
 <?php
+
 namespace ScalableDB\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -6,10 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class ShardDiagnoseCommand extends Command
 {
-    protected $signature   = 'shard:diagnose {--json}';
+    protected $signature = 'shard:diagnose {--json}';
+
     protected $description = 'Check connections and return non‑zero on failure';
 
-    public function handle()
+    public function handle(): int
     {
         $failed = [];
         $report = [];

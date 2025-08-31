@@ -1,4 +1,5 @@
 <?php
+
 namespace ScalableDB\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -7,9 +8,10 @@ use Illuminate\Support\Facades\DB;
 class ShardStatusCommand extends Command
 {
     protected $signature = 'shard:status';
+
     protected $description = 'Show health of all shards';
 
-    public function handle()
+    public function handle(): int
     {
         $rows = [];
 
@@ -22,8 +24,13 @@ class ShardStatusCommand extends Command
         }
 
         $this->table(['Shard', 'Connection', 'Role', 'Status', 'ms'], $rows);
+
+        return self::SUCCESS;
     }
 
+    /**
+     * @return array{0: string, 1: string, 2: string, 3: string, 4: int}
+     */
     private function probe(string $shard, string $conn, string $role): array
     {
         $t0 = microtime(true);

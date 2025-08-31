@@ -21,13 +21,13 @@ php artisan migrate \
   --force
 
 #echo "🔧 Migrating lookup (sqlite)…"
-#php artisan migrate \
-#  --database=lookup \
-#  --path=database/migrations/lookup \
-#  --force || true
+php artisan migrate \
+  --database=lookup \
+  --path=database/migrations/lookup \
+  --force || true
 
-echo "🔧 Migrating shards (lookup)…"
-php artisan shard:migrate || true
+echo "🔧 Migrating shards (users)…"
+php artisan shard:migrate --path=database/migrations --force || true
 
 
 

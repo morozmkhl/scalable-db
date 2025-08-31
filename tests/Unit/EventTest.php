@@ -1,9 +1,10 @@
 <?php
+
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
-use ScalableDB\Facades\Shard;
-use ScalableDB\Events\ShardResolved;
 use ScalableDB\Events\ShardFailover;
+use ScalableDB\Events\ShardResolved;
+use ScalableDB\Facades\Shard;
 
 it('fires ShardResolved', function () {
     Event::fake();
@@ -18,10 +19,10 @@ it('fires ShardResolved', function () {
 it('fires ShardFailover', function () {
 
     config()->set('database.connections.bad_master', [
-        'driver' => 'sqlite', 'database' => ':memory:'
+        'driver' => 'sqlite', 'database' => ':memory:',
     ]);
     config()->set('database.connections.replica_ok', [
-        'driver' => 'sqlite', 'database' => ':memory:'
+        'driver' => 'sqlite', 'database' => ':memory:',
     ]);
 
     config()->set('scalable-db', [
@@ -37,8 +38,13 @@ it('fires ShardFailover', function () {
         'shards' => [
             'S0' => [
                 'connection' => 'bad_master',
-                'replicas'   => ['replica_ok'],
+                'replicas' => ['replica_ok'],
             ],
+        ],
+
+        'failover' => [
+            'auto_failover' => true,
+            'max_retries' => 1,
         ],
     ]);
 
@@ -53,6 +59,7 @@ it('fires ShardFailover', function () {
         if ($attempt === 1) {
             throw new PDOException('simulate master down');
         }
+
         return true;
     });
 

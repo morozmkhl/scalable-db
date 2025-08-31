@@ -1,8 +1,8 @@
 <?php
+
 namespace ScalableDB;
 
 use Illuminate\Support\ServiceProvider;
-use ScalableDB\Console;
 use ScalableDB\Services\ShardManager;
 use ScalableDB\Strategies\HashShardingStrategy;
 use ScalableDB\Strategies\LookupShardingStrategy;
@@ -12,14 +12,14 @@ class ScalableDBServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/scalable-db.php', 'scalable-db');
+        $this->mergeConfigFrom(__DIR__.'/../config/scalable-db.php', 'scalable-db');
 
         $this->app->singleton('shard.manager', function ($app) {
-            $cfg      = $app['config']->get('scalable-db');
+            $cfg = $app['config']->get('scalable-db');
             $strategy = $cfg['default_strategy'];
 
             $strategyInstance = match ($strategy) {
-                'hash'  => new HashShardingStrategy(
+                'hash' => new HashShardingStrategy(
                     $cfg['strategies']['hash']['map'],
                     $cfg['strategies']['hash']['shard_count'],
                 ),
@@ -47,7 +47,9 @@ class ScalableDBServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/scalable-db.php' => config_path('scalable-db.php'),
             ], 'scalable-db-config');
-
+            $this->publishes([
+                __DIR__.'/../config/database-shards.php' => config_path('database-shards.php'),
+            ], 'scalable-db-database');
 
         }
 
