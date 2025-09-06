@@ -2,6 +2,7 @@
 
 use Illuminate\Database\DatabaseManager;
 use Mockery as m;
+use Mockery\MockInterface;
 use ScalableDB\Services\ShardManager;
 use ScalableDB\Strategies\ShardingStrategyInterface;
 
@@ -23,7 +24,7 @@ function makeFailoverManager(DatabaseManager $db, array $cfg): ShardManager
 
 it('falls back to replica when master down', function () {
 
-    /** @var DatabaseManager&\Mockery\MockInterface $db */
+    /** @var DatabaseManager&MockInterface $db */
     $db = m::mock(DatabaseManager::class);
 
     $db->shouldReceive('getDefaultConnection')->andReturn('mysql');
@@ -71,7 +72,7 @@ it('falls back to replica when master down', function () {
 
 it('throws immediately when auto_failover is disabled', function () {
 
-    /** @var DatabaseManager&\Mockery\MockInterface $db */
+    /** @var DatabaseManager&MockInterface $db */
     $db = m::mock(DatabaseManager::class);
 
     $db->shouldReceive('getDefaultConnection')->andReturn('mysql');
@@ -101,7 +102,7 @@ it('throws immediately when auto_failover is disabled', function () {
 
 it('tries multiple replicas up to max_retries', function () {
 
-    /** @var DatabaseManager&\Mockery\MockInterface $db */
+    /** @var DatabaseManager&MockInterface $db */
     $db = m::mock(DatabaseManager::class);
 
     $db->shouldReceive('getDefaultConnection')->andReturn('mysql');
@@ -143,7 +144,7 @@ it('tries multiple replicas up to max_retries', function () {
 
 it('uses global fallback_connection when replicas are exhausted', function () {
 
-    /** @var DatabaseManager&\Mockery\MockInterface $db */
+    /** @var DatabaseManager&MockInterface $db */
     $db = m::mock(DatabaseManager::class);
 
     $db->shouldReceive('getDefaultConnection')->andReturn('mysql');

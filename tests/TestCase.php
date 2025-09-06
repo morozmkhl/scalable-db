@@ -3,6 +3,7 @@
 namespace ScalableDB\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use ScalableDB\Facades\Shard;
 use ScalableDB\ScalableDBServiceProvider;
 
 abstract class TestCase extends BaseTestCase
@@ -16,7 +17,7 @@ abstract class TestCase extends BaseTestCase
     /** Регистрируем фасад‑алиас */
     protected function getPackageAliases($app)
     {
-        return ['Shard' => \ScalableDB\Facades\Shard::class];
+        return ['Shard' => Shard::class];
     }
 
     /** Настраиваем окружение ДО инициализации провайдера */

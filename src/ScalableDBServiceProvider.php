@@ -3,10 +3,13 @@
 namespace ScalableDB;
 
 use Illuminate\Support\ServiceProvider;
+use Laravel\Telescope\Telescope;
+use ScalableDB\Http\Middleware\TenantShardMiddleware;
 use ScalableDB\Services\ShardManager;
 use ScalableDB\Strategies\HashShardingStrategy;
 use ScalableDB\Strategies\LookupShardingStrategy;
 use ScalableDB\Strategies\RangeShardingStrategy;
+use ScalableDB\Telescope\ShardTagWatcher;
 
 class ScalableDBServiceProvider extends ServiceProvider
 {
@@ -61,9 +64,9 @@ class ScalableDBServiceProvider extends ServiceProvider
         ]);
 
         $router = $this->app['router'];
-        $router->aliasMiddleware('shard.tenant', \ScalableDB\Http\Middleware\TenantShardMiddleware::class);
-        if (class_exists(\Laravel\Telescope\Telescope::class)) {
-            \ScalableDB\Telescope\ShardTagWatcher::register();
+        $router->aliasMiddleware('shard.tenant', TenantShardMiddleware::class);
+        if (class_exists(Telescope::class)) {
+            ShardTagWatcher::register();
         }
 
     }

@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use ScalableDB\Facades\Shard;
 
 Route::get('/debug-middleware', function () {
-    $rc = new \ReflectionClass(App\Http\Middleware\VerifyCsrfToken::class);
+    $rc = new ReflectionClass(VerifyCsrfToken::class);
 
     return $rc->getFileName(); // покажет путь до реально загруженного класса
 });
@@ -40,7 +41,7 @@ Route::get('/status', function () {
         try {
             DB::connection($info['connection'])->select('select 1');
             $resp[$name]['master'] = 'OK';
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $resp[$name]['master'] = 'DOWN';
         }
     }

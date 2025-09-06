@@ -6,6 +6,7 @@ use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\Event;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
+use ScalableDB\Facades\Shard;
 
 class ShardTagWatcher
 {
@@ -24,7 +25,7 @@ class ShardTagWatcher
      */
     public static function tags(IncomingEntry $entry): array
     {
-        $current = \ScalableDB\Facades\Shard::current();
+        $current = Shard::current();
 
         return $current ? ["shard:$current"] : [];
     }

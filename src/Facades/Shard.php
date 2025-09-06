@@ -2,7 +2,9 @@
 
 namespace ScalableDB\Facades;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
+use ScalableDB\Services\ShardManager;
 
 class Shard extends Facade
 {
@@ -15,7 +17,7 @@ class Shard extends Facade
 
     public static function forTenant(int|string $tenantId): ShardContext
     {
-        /** @var \ScalableDB\Services\ShardManager $manager */
+        /** @var ShardManager $manager */
         $manager = static::getFacadeRoot();
         $shard = $manager->resolve($tenantId);
 
@@ -24,7 +26,7 @@ class Shard extends Facade
 
     public static function current(): ?string
     {
-        /** @var \ScalableDB\Services\ShardManager $manager */
+        /** @var ShardManager $manager */
         $manager = static::getFacadeRoot();
 
         return $manager->getCurrentShard();
@@ -34,7 +36,7 @@ class Shard extends Facade
 class ShardContext
 {
     public function __construct(
-        private readonly \ScalableDB\Services\ShardManager $mgr,
+        private readonly ShardManager $mgr,
         private readonly string $shard,
         private readonly string $pdoMode = 'default',
     ) {}
@@ -52,7 +54,7 @@ class ShardContext
     public function run(\Closure $cb): mixed
     {
         return $this->mgr->runInShard($this->shard, function () use ($cb) {
-            $connection = \Illuminate\Support\Facades\DB::connection();
+            $connection = DB::connection();
 
             if ($this->pdoMode === 'read') {
                 $connection->setPdo($connection->getReadPdo());

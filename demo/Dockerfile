@@ -7,10 +7,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-RUN composer create-project --prefer-dist laravel/laravel:^11.0 .
+RUN composer config --global audit.block-insecure false \
+ && composer create-project --prefer-dist laravel/laravel:^11.0 .
 COPY . scalable-db
 
-COPY demo/.env /app/.env
+COPY demo/.env.example /app/.env
 COPY demo/overrides/config/database.php /app/config/database.php
 COPY demo/overrides/routes/web.php      /app/routes/web.php
 COPY demo/overrides/bootstrap/app.php /app/bootstrap/app.php

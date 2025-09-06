@@ -3,7 +3,7 @@
   "description": "Advanced sharding, replication & fail‑over package for Laravel 11",
   "type": "library",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authors": [
     {
       "name": "Mikhail",
@@ -64,7 +64,7 @@
     "analyse": "vendor/bin/phpstan analyse --memory-limit=512M"
   },
 
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true,
   "config": {
     "allow-plugins": {

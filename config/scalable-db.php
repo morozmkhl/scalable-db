@@ -1,5 +1,7 @@
 <?php
 
+use ScalableDB\Database\Seeders\DatabaseSeeder;
+
 // publishes to config/scalable-db.php
 return [
 
@@ -86,6 +88,6 @@ return [
     */
     'seeder' => env(
         'SCALABLE_DB_SEEDER',
-        \ScalableDB\Database\Seeders\DatabaseSeeder::class,
+        DatabaseSeeder::class,
     ),
 ];
