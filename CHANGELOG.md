@@ -25,7 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Demo replica host uses `SHARD0_REPLICA_HOST` (defaults to `replica1`).
 - CI workflow: lint and PHPStan gate, PHP 8.2/8.4 × SQLite/MySQL matrix, Composer cache.
 - README rewritten in English; documentation expanded under `docs/`.
-- `minimum-stability` set to `stable`.
+- `laravel/framework` constraint raised to `^11.5` (Pest plugin compatibility).
+- Composer `audit.block-insecure: false` to allow CI install while Laravel 11.x advisories remain open on Packagist.
 
 ### Fixed
 

@@ -35,6 +35,9 @@ jobs:
           key: composer-${{ runner.os }}-${{ hashFiles('composer.json') }}
           restore-keys: composer-${{ runner.os }}-
 
+      - name: Configure Composer
+        run: composer config audit.block-insecure false
+
       - name: Composer install
         run: composer install --prefer-dist --no-interaction --no-progress
 
@@ -87,6 +90,9 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-${{ runner.os }}-${{ hashFiles('composer.json') }}
           restore-keys: composer-${{ runner.os }}-
+
+      - name: Configure Composer
+        run: composer config audit.block-insecure false
 
       - name: Composer install
         run: composer install --prefer-dist --no-interaction --no-progress

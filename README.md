@@ -9,7 +9,7 @@ Shard routing layer for Laravel 11 applications. The package resolves a tenant o
 | Component | Version |
 |-----------|---------|
 | PHP       | ^8.2    |
-| Laravel   | ^11.0   |
+| Laravel   | ^11.5   |
 
 ## Installation
 
