@@ -1,0 +1,10 @@
+.git
+.github
+vendor
+node_modules
+.phpunit.result.cache
+coverage
+.idea
+.vscode
+*.log
+demo/.env

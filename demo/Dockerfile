@@ -17,8 +17,8 @@ COPY demo/overrides/routes/web.php      /app/routes/web.php
 COPY demo/overrides/bootstrap/app.php /app/bootstrap/app.php
 RUN composer dump-autoload
 RUN composer config repositories.scalabledb path ./scalable-db \
- && composer require morozmkhl/scalable-db \
-        --no-interaction --prefer-dist
+ && composer require morozmkhl/scalable-db:@dev \
+        --no-interaction
 
 COPY demo/start.sh /app/start.sh
 RUN chmod +x /app/start.sh
