@@ -3,7 +3,12 @@
   "description": "Advanced sharding, replication & fail‑over package for Laravel 11",
   "type": "library",
   "license": "MIT",
-  "version": "1.1.0",
+  "homepage": "https://github.com/morozmkhl/scalable-db",
+  "keywords": ["laravel", "sharding", "database", "replication", "failover"],
+  "support": {
+    "issues": "https://github.com/morozmkhl/scalable-db/issues",
+    "source": "https://github.com/morozmkhl/scalable-db"
+  },
   "authors": [
     {
       "name": "Mikhail",
