@@ -1,0 +1,82 @@
+{
+  "name": "morozmkhl/scalable-db",
+  "description": "Advanced sharding, replication & fail‑over package for Laravel 11",
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/morozmkhl/scalable-db",
+  "keywords": ["laravel", "sharding", "database", "replication", "failover"],
+  "support": {
+    "issues": "https://github.com/morozmkhl/scalable-db/issues",
+    "source": "https://github.com/morozmkhl/scalable-db"
+  },
+  "authors": [
+    {
+      "name": "Mikhail",
+      "email": "moroz.mkhl@gmail.com"
+    }
+  ],
+
+  "require": {
+    "php": "^8.2",
+    "laravel/framework": "^11.5"
+  },
+
+  "require-dev": {
+    "orchestra/testbench": "^9.0",
+    "pestphp/pest": "^2.0",
+    "laravel/pint": "^1.0",
+    "phpstan/phpstan": "^1.11",
+    "larastan/larastan": "^2.9",
+    "phpstan/phpstan-mockery": "^1.1",
+    "pestphp/pest-plugin-laravel": "^2.4",
+    "laravel/telescope": "^5.7"
+  },
+
+  "suggest": {
+    "laravel/telescope": "Shard tagging in Telescope entries"
+  },
+
+  "autoload": {
+    "psr-4": {
+      "ScalableDB\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+
+  "autoload-dev": {
+    "psr-4": {
+      "ScalableDB\\Tests\\": "tests/",
+      "ScalableDB\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+
+  "extra": {
+    "laravel": {
+      "providers": [
+        "ScalableDB\\ScalableDBServiceProvider"
+      ],
+      "aliases": {
+        "Shard": "ScalableDB\\Facades\\Shard"
+      }
+    }
+  },
+
+  "scripts": {
+    "test": "vendor/bin/pest",
+    "lint": "vendor/bin/pint",
+    "analyse": "vendor/bin/phpstan analyse --memory-limit=512M"
+  },
+
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    },
+    "audit": {
+      "block-insecure": false
+    }
+  }
+}

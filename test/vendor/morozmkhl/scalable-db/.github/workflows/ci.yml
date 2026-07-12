@@ -1,0 +1,152 @@
+# CI: lint, static analysis, tests (PHP × DB matrix), demo smoke
+name: tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, pdo_sqlite, intl, zip
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Configure Composer
+        run: composer config audit.block-insecure false
+
+      - name: Composer install
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Lint (Pint)
+        run: composer lint -- --test
+
+      - name: Analyse (PHPStan)
+        run: composer analyse
+
+  pest:
+    needs: lint
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.4']
+        db: [sqlite, mysql]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: shard0
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -p$$MYSQL_ROOT_PASSWORD"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_mysql, pdo_sqlite, intl, zip
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Configure Composer
+        run: composer config audit.block-insecure false
+
+      - name: Composer install
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Configure DB connection (${{ matrix.db }})
+        run: |
+          if [ "${{ matrix.db }}" = "mysql" ]; then
+            echo "DB_CONNECTION=mysql" >> "$GITHUB_ENV"
+            echo "DB_HOST=127.0.0.1" >> "$GITHUB_ENV"
+            echo "DB_PORT=3306" >> "$GITHUB_ENV"
+            echo "DB_DATABASE=shard0" >> "$GITHUB_ENV"
+            echo "DB_USERNAME=root" >> "$GITHUB_ENV"
+            echo "DB_PASSWORD=root" >> "$GITHUB_ENV"
+          else
+            echo "DB_CONNECTION=sqlite" >> "$GITHUB_ENV"
+            echo "DB_DATABASE=:memory:" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run tests (Pest)
+        run: composer test
+
+  demo:
+    needs: lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and start demo stack
+        working-directory: demo
+        run: docker compose up -d --build
+
+      - name: Wait for demo app
+        run: |
+          for i in $(seq 1 36); do
+            if curl -sf http://localhost:8000/ping >/dev/null; then
+              echo "Demo app is up (attempt $i)"
+              exit 0
+            fi
+            sleep 5
+          done
+          docker compose -f demo/docker-compose.yml logs
+          exit 1
+
+      - name: Smoke test /ping
+        run: curl -sf http://localhost:8000/ping
+
+      - name: Smoke test POST /users
+        run: curl -sf -X POST -d "id=5&name=Eve" http://localhost:8000/users
+
+      - name: Smoke test GET /users/shard/5
+        run: curl -sf http://localhost:8000/users/shard/5
+
+      - name: Tear down demo stack
+        if: always()
+        working-directory: demo
+        run: docker compose down -v

@@ -1,0 +1,17 @@
+{
+    "name": "rasknastya/test",
+    "autoload": {
+        "psr-4": {
+            "Rasknastya\\Test\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "misha",
+            "email": "moroz.mkhl@gmail.com"
+        }
+    ],
+    "require": {
+        "morozmkhl/scalable-db": "^1.1"
+    }
+}
